@@ -1,0 +1,23 @@
+## input文件示例
+
+
+'''
+** PREDEFINED FIELDS
+** 
+** Name: Predefined weld-1C1D-temp   Type: Temperature
+*Initial Conditions, type=TEMPERATURE
+1, 298.
+2, 302.
+
+节点编号, 温度值
+
+
+** Name: Predefined weld-1C1D-temp-stress   Type: STRESS
+*Initial Conditions, type=STRESS
+1, S11, S22,  
+
+Element number, 433.
+
+
+** Name: Predefined weld-1C1D-temp-stress   Type: PLASTIC STRAIN
+*Initial Conditions, type=PLASTIC STRAIN
