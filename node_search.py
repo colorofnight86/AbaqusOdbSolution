@@ -46,7 +46,7 @@ def in_boundary(point, boundary):
     l_ = boundary[3]
 
     return boundary[0] <= point[0] < boundary[0] + l_ and boundary[1] <= point[1] < boundary[1] + l_ and \
-           boundary[2] <= point[2] < boundary[2] + l_
+        boundary[2] <= point[2] < boundary[2] + l_
 
 
 def contain_node(node_list, node_index, boundary):
@@ -259,20 +259,20 @@ def min_distance(p, boundary, root_boundary):
     x1, y1, z1 = p[0], p[1], p[2]
     x2, y2, z2, l2 = boundary[0], boundary[1], boundary[2], boundary[3]
     # 优化
-    # x_min, y_min, z_min = root_boundary[0], root_boundary[1], root_boundary[2]
-    # x_max, y_max, z_max = root_boundary[0] + root_boundary[3], root_boundary[1] + root_boundary[3], root_boundary[2] + \
-    #                       root_boundary[3]
-    # distances = [root_boundary[3] * root_boundary[3] * 3]
-    # if x2 > x_min: distances.append((x2 - x1) * (x2 - x1))
-    # if x2 + l2 < x_max: distances.append((x2 + l2 - x1) * (x2 + l2 - x1))
-    # if y2 > y_min: distances.append((y2 - y1) * (y2 - y1))
-    # if y2 + l2 < y_max: distances.append((y2 + l2 - y1) * (y2 + l2 - y1))
-    # if z2 > z_min: distances.append((z2 - z1) * (z2 - z1))
-    # if z2 + l2 < z_max: distances.append((z2 + l2 - z1) * (z2 + l2 - z1))
+    x_min, y_min, z_min = root_boundary[0], root_boundary[1], root_boundary[2]
+    x_max, y_max, z_max = root_boundary[0] + root_boundary[3], root_boundary[1] + root_boundary[3], root_boundary[2] + \
+        root_boundary[3]
+    distances = [root_boundary[3] * root_boundary[3] * 3]
+    if x2 > x_min: distances.append((x2 - x1) * (x2 - x1))
+    if x2 + l2 < x_max: distances.append((x2 + l2 - x1) * (x2 + l2 - x1))
+    if y2 > y_min: distances.append((y2 - y1) * (y2 - y1))
+    if y2 + l2 < y_max: distances.append((y2 + l2 - y1) * (y2 + l2 - y1))
+    if z2 > z_min: distances.append((z2 - z1) * (z2 - z1))
+    if z2 + l2 < z_max: distances.append((z2 + l2 - z1) * (z2 + l2 - z1))
     # 优化前
-    distances = [(x2 - x1) * (x2 - x1), (x2 + l2 - x1) * (x2 + l2 - x1), (y2 - y1) * (y2 - y1),
-                 (y2 + l2 - y1) * (y2 + l2 - y1), (y2 + l2 - y1) * (y2 + l2 - y1),
-                 (z2 - z1) * (z2 - z1), (z2 + l2 - z1) * (z2 + l2 - z1)]
+    # distances = [(x2 - x1) * (x2 - x1), (x2 + l2 - x1) * (x2 + l2 - x1), (y2 - y1) * (y2 - y1),
+    #              (y2 + l2 - y1) * (y2 + l2 - y1), (y2 + l2 - y1) * (y2 + l2 - y1),
+    #              (z2 - z1) * (z2 - z1), (z2 + l2 - z1) * (z2 + l2 - z1)]
     return min(distances)
 
 
@@ -461,4 +461,4 @@ if __name__ == '__main__':
     #
     # # 生成输出文件
     generate_output_file(path + output, nodes, elements, target_nodes, target_elements,
-                         knn_node, knn_element, data_temper, data_stress, 1)
+                         knn_node, knn_element, data_temper, data_stress, 2)

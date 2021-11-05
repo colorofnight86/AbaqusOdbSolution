@@ -8,6 +8,7 @@
 
 import math
 import random
+import time
 
 
 def inverse_distance_weight(point, points, values, select=2):
@@ -85,12 +86,15 @@ def get_point_list(num):
 
 
 def inverse_distance_interpolation(points, boundaries, values, select=2):
+    start_time = time.time()
     result = [0.0] * len(points)
     for i in range(len(points)):
         point = points[i]
         point_list = boundaries[i]
         value = values[i]
         result[i] = inverse_distance_weight(point, point_list, value, select)
+    end_time = time.time()
+    print(select, '耗时:', end_time-start_time, 's')
     return result
 
 
@@ -125,12 +129,11 @@ def compare(list1, list2):
 
 
 if __name__ == '__main__':
-    p, p_list, para = get_point_list(1000)
+    p, p_list, para = get_point_list(10000)
     res1 = inverse_distance_interpolation(p, p_list, para, 1)
     res2 = inverse_distance_interpolation(p, p_list, para, 2)
     res3 = inverse_distance_interpolation(p, p_list, para, 3)
     res = three_linear_interpolation(p, p_list, para)
-    print(res)
     print(compare(res, res1))
     print(compare(res, res2))
     print(compare(res, res3))
