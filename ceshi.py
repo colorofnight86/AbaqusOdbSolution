@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 
 def refactor(list1):
@@ -10,3 +11,8 @@ if __name__ == '__main__':
     # refactor(lists)
     str1 = ','.join(str(i) for i in lists)
     print(str1, lists)
+    lists = [11j]
+    print(lists)
+
+    r, theta = np.mgrid[0:1:11j, 0:np.pi * 2:25j]
+    print(r)
