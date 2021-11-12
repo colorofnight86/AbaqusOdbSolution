@@ -3,7 +3,7 @@
 *.pdf
 *.odb
 *.xmind
-ceshi.py
+*ceshi.py
 
 # IntelliJ project files
 .idea
