@@ -49,9 +49,11 @@ Abaqus内部使用二次/三次线性插值法求差值，如下所示
 
 ![](data/linearInterpolation.png)
 
-$$x^2$$
+$$f(R_{1})=\frac{x_{2}-x}{x_{2}-x_{1}}f(Q_{11})+\frac{x-x_{1}}{x_{2}-x_{1}}f(Q_{21})$$
+$$f(R_{2})=\frac{x_{2}-x}{x_{2}-x_{1}}f(Q_{12})+\frac{x-x_{1}}{x_{2}-x_{1}}f(Q_{22})$$
+$$f(P)=\frac{y_{2}-y}{y_{2}-y_{1}}f(R_{1})+\frac{y-y_{1}}{y_{2}-y_{1}}f(R_{2})$$
 
-（此处公式待补充）
+公式无法正常显示请安装[MathJax插件](https://chrome.google.com/webstore/detail/mathjax-plugin-for-github/ioemnmodlmafdkllaclgeombjnmnbima/related)
 
 而该方法要求这4/8个差值点共面/形成一个六面体，而实际上用八叉树找到的8个最近邻点并不能满足这个要求，因此考虑反距离加权插值法
 
