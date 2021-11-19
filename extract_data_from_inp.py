@@ -8,7 +8,7 @@
 
 if __name__ == '__main__':
     path = 'E:/new/gongguan/data/'
-    file = 'Job-1C1Ddeformed.inp'
+    file = 'Job-1-deformed.inp'
     node = 'target_node.csv'
     element = 'target_element.csv'
 
@@ -23,7 +23,7 @@ if __name__ == '__main__':
             content = fr.readline()
         content = fr.readline()
         # element
-        while content[0:5] != '*Nset':
+        while content[0:4] != '*End':
             fw_element.write(content.replace(' ', ''))
             content = fr.readline()
 

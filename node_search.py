@@ -8,6 +8,7 @@
 
 import time
 import math
+import re
 
 
 class OcTreeNode:
@@ -367,41 +368,64 @@ def compare(list1, list2):
     print('\n校验结果：不同的个数为', len(result), result)
 
 
-def generate_output_file(file_path, nods, els, target_nods, target_els, knn_nods, knn_els, temper_data, stress_data,
+def generate_output_file(file_path, src_file_path, nods, els, target_nods, target_els, knn_nods, knn_els, temper_data, stress_data,
                          select):
+    """
+
+    :param file_path: 生成输出文件路径
+    :param src_file_path: inp文件路径
+    :param nods:
+    :param els:
+    :param target_nods:
+    :param target_els:
+    :param knn_nods:
+    :param knn_els:
+    :param temper_data:
+    :param stress_data:
+    :param select:
+    """
+    instance = 'Part-1-1.'
     start_time = time.time()
     with open(file_path, 'w+') as f:
+        with open(src_file_path, "r") as fi:
+            content = ''.join(fi.readlines())
+            target = '.*STEP:'
+            tab = re.search(target, content)
+            pos = tab.start()
+        f.write(content[:pos])
+
         # 节点温度生成
-        f.write('** PREDEFINED FIELDS\n** \n** Name: Predefined weld-1C1D-temp \
-                    Type: STRESS\n*Initial Conditions, type=STRESS\n')
+        f.write('** PREDEFINED FIELDS\n** \n** Name: Predefined weld-1C1D-TEMPERATURE \
+                    Type: TEMPERATURE\n*Initial Conditions, type=TEMPERATURE\n')
         for target_label in range(1, len(target_nods)):
             target_point = target_nods[target_label]
             knn_labels = knn_nods[target_label]
-            f.write(str(target_label) + ', ' +
+            f.write(instance + str(target_label) + ', ' +
                     ', '.join(str(el) for el in inverse_distance_weight(target_point, [nods[i] for i in knn_labels],
                                                                         [temper_data[i] for i in knn_labels],
                                                                         select)) + '\n')
         # 单元应力生成
-        f.write('\n** Name: Predefined weld-1C1D-temp \
-                    Type: Temperature\n*Initial Conditions, type=TEMPERATURE\n')
-        for target_label in range(1, len(target_els)):
-            target_element = target_els[target_label]
-            knn_labels = knn_els[target_label]
-            f.write(str(target_label) + ', ' +
-                    ', '.join(str(el) for el in inverse_distance_weight(target_element, [els[i] for i in knn_labels],
-                                                                        [stress_data[i][1:7] for i in knn_labels],
-                                                                        select)) + '\n')
-        # 单元应变生成
-        f.write('\n** Name: Predefined weld-1C1D-temp \
+        f.write('** Name: Predefined weld-1C1D-STRAIN \
                     Type: PLASTIC STRAIN\n*Initial Conditions, type=PLASTIC STRAIN\n')
         for target_label in range(1, len(target_els)):
             target_element = target_els[target_label]
             knn_labels = knn_els[target_label]
-            f.write(str(target_label) + ', ' +
+            f.write(instance + str(target_label) + ', ' +
+                    ', '.join(str(el) for el in inverse_distance_weight(target_element, [els[i] for i in knn_labels],
+                                                                        [stress_data[i][1:7] for i in knn_labels],
+                                                                        select)) + '\n')
+        # 单元应变生成
+        f.write('** Name: Predefined weld-1C1D-STRESS \
+                    Type: STRESS\n*Initial Conditions, type=STRESS\n')
+        for target_label in range(1, len(target_els)):
+            target_element = target_els[target_label]
+            knn_labels = knn_els[target_label]
+            f.write(instance + str(target_label) + ', ' +
                     ', '.join(str(el) for el in inverse_distance_weight(target_element, [els[i] for i in knn_labels],
                                                                         [stress_data[i][8:14] for i in knn_labels],
                                                                         select)) + '\n')
-        print('\n新模型构建参数文件 input_info.txt 已生成。')
+        f.write(content[pos:])
+        print('\n新模型构建参数文件 input_info.inp 已生成。')
     end_time = time.time()
     print('耗时：' + str(end_time - start_time) + 's')
 
@@ -415,7 +439,6 @@ if __name__ == '__main__':
     stress = 'strain&stress.csv'
     node_target_file = 'target_node.csv'
     element_target_file = 'target_element.csv'
-    output = 'input_info.txt'
 
     node_num = -1  # 读取点的个数
     target_node_num = -1  # 目标点的个数
@@ -459,6 +482,8 @@ if __name__ == '__main__':
     data_temper = load_data(path, temperature, node_num)[0]
     data_stress = load_data(path, stress, node_num)[0]
     #
-    # # 生成输出文件
-    generate_output_file(path + output, nodes, elements, target_nodes, target_elements,
+    # 生成输出文件
+    inp_file = 'Job-1-deformed.inp'
+    output = 'input_info.inp'
+    generate_output_file(path + output, path + inp_file, nodes, elements, target_nodes, target_elements,
                          knn_node, knn_element, data_temper, data_stress, 2)
