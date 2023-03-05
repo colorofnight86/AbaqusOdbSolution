@@ -50,6 +50,7 @@ with open(path + 'temperature' + suffix, mode='w+') as f:
 # 坐标(Nodes)：
 RS = odb.steps[step].frames[-1].fieldOutputs['U'].getSubset(region=weld_nodes).values  # 位移列表
 coordinate = ['']*(len(nodes)+1)
+coordinate_final = ['']*(len(nodes)+1)
 # 点的坐标持久化 nodeLabel,x,y,z
 with open(path + 'final_coordinate' + suffix, mode='w+') as f:
     for idx in range(len(nodes)):
@@ -57,8 +58,16 @@ with open(path + 'final_coordinate' + suffix, mode='w+') as f:
         rs = RS[idx]
         if node.label != rs.nodeLabel:
             print('label not equal:', idx)
-        coordinate[node.label] = str(node.label) + ',' + ','.join(
+        coordinate_final[node.label] = str(node.label) + ',' + ','.join(
             str(node.coordinates[i] + rs.data[i]) for i in range(len(node.coordinates))) + '\n'
+    for i in range(1, len(nodes) + 1):
+        f.write(coordinate_final[i])
+
+with open(path + 'coordinate' + suffix, mode='w+') as f:
+    for idx in range(len(nodes)):
+        node = nodes[idx]
+        coordinate[node.label] = str(node.label) + ',' + ','.join(
+            str(node.coordinates[i]) for i in range(len(node.coordinates))) + '\n'
     for i in range(1, len(nodes) + 1):
         f.write(coordinate[i])
 

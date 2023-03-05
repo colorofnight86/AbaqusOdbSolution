@@ -14,16 +14,17 @@ if __name__ == '__main__':
 
     with open(path+file, 'r') as fr, open(path+node, 'w+') as fw_node, open(path+element, 'w+') as fw_element:
         content = fr.readline()
+        # 找到node前一行
         while content[0:5] != '*Node':
             content = fr.readline()
         content = fr.readline()
-        # node
+        # 读取node
         while content[0:8] != '*Element':
             fw_node.write(content.replace(' ', ''))
             content = fr.readline()
         content = fr.readline()
-        # element
-        while content[0:4] != '*End':
+        # 读取element
+        while content[0:4] != '*End' and content[0:5] != '*Nset':
             fw_element.write(content.replace(' ', ''))
             content = fr.readline()
 

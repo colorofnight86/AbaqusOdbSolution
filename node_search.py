@@ -4,11 +4,12 @@
 # @Email   : 852477089@qq.com
 # @File    : node_search.py
 # @Software: PyCharm
-# @Description: 八叉树实现K近邻搜索
+# @Description: 八叉树实现K近邻搜索，并使用该方法完成节点和网格的插值
 
 import time
 import math
 import re
+
 
 
 class OcTreeNode:
@@ -119,7 +120,7 @@ def load_data(filepath, filename, num=-1, data_type='float'):
     :param filepath: 文件路径
     :param filename: 文件名
     :param data_type: 读取的数据类型
-    :param num: 读取数据的个数，<0表示读取全部
+    :param num: 读取数据的个数，小于0表示读取全部
     :return: 数据列表，去编号
     """
     with open(filepath + filename, mode='r', newline='\n') as f:
@@ -234,6 +235,59 @@ def get_knn(point_list, tree, point, node_id, k):
                 return [pair[0] for pair in sorted_distance[:k]]
         depth += 1
         node_id = int(node_id / 10)
+
+
+
+
+# 判断点是否在线的上下左右的
+def check_point(_p1, _p2, _p):
+    _l, _r, _u, _d = 0, 0, 0, 0
+    _x1, _y1, _x2, _y2, _x0, _y0 = _p1[0], _p1[1], _p2[0], _p2[1], _p[0], _p[1]
+    if (_x1 <= _x0 <= _x2) or (_x2 <= _x0 <= _x1):
+        if _x1 == _x2:
+            _u, _d = 1, 1
+        else:
+            _y = (_x0 - _x2) / (_x1 - _x2) * (_y1 - _y2) + _y2
+            if _y0 >= _y:
+                _u = 1
+            else:
+                _d = 1
+    if (_y1 <= _y0 <= _y2) or (_y2 <= _y0 <= _y1):
+        if _y1 == _y2:
+            _l, _r = 1, 1
+        else:
+            _x = (_y0 - _y2) / (_y1 - _y2) * (_x1 - _x2)
+            if _x0 >= _x:
+                _r = 1
+            else:
+                _l = 1
+    return _l, _r, _u, _d
+
+
+# 判断点是否在线里
+def point_in_line(_point, _line):
+    _line = close_line(_line)
+    _i = 0
+    left, right, up, down = 0, 0, 0, 0
+    while _i < len(_line) - 1:
+        _p1 = _line[_i]
+        _p2 = _line[_i + 1]
+        l_, r_, u_, d_ = check_point(_p1, _p2, _point[0:2])
+        left += l_
+        right += r_
+        up += u_
+        down += d_
+        if (left > 0 and right > 0) or (up > 0 and down > 0):
+            return True
+        _i += 1
+    return False
+
+
+# 线的首尾相连
+def close_line(_line: list):
+    if len(_line) > 1 and _line[0] != _line[-1]:
+        _line.append(_line[0])
+    return _line.copy()
 
 
 def get_center_point(elements_list, point_list):
@@ -369,21 +423,28 @@ def compare(list1, list2):
 
 
 def generate_output_file(file_path, src_file_path, nods, els, target_nods, target_els, knn_nods, knn_els, temper_data, stress_data,
-                         select):
+                         n):
     """
 
     :param file_path: 生成输出文件路径
     :param src_file_path: inp文件路径
-    :param nods:
-    :param els:
-    :param target_nods:
-    :param target_els:
-    :param knn_nods:
-    :param knn_els:
-    :param temper_data:
-    :param stress_data:
-    :param select:
+    :param nods: 已知节点坐标
+    :param els: 已知单元中心坐标
+    :param target_nods: 目标节点坐标
+    :param target_els: 目标单元中心坐标
+    :param knn_nods: 节点的近邻点信息
+    :param knn_els: 单元中心点的近邻点信息
+    :param temper_data: 已知节点的温度信息
+    :param stress_data: 已知单元的应力信息
+    :param n: 距离的n次方的倒数比来插值
     """
+
+    # 获取范围
+    with open('data/ouline_deformed.txt') as f:
+        lines = f.readlines()
+        circle = [list(map(float, line.split(','))) for line in lines]
+
+
     instance = 'Part-1-1.'
     start_time = time.time()
     with open(file_path, 'w+') as f:
@@ -399,31 +460,37 @@ def generate_output_file(file_path, src_file_path, nods, els, target_nods, targe
                     Type: TEMPERATURE\n*Initial Conditions, type=TEMPERATURE\n')
         for target_label in range(1, len(target_nods)):
             target_point = target_nods[target_label]
+            if not point_in_line(target_point, circle):
+                continue
             knn_labels = knn_nods[target_label]
             f.write(instance + str(target_label) + ', ' +
                     ', '.join(str(el) for el in inverse_distance_weight(target_point, [nods[i] for i in knn_labels],
                                                                         [temper_data[i] for i in knn_labels],
-                                                                        select)) + '\n')
+                                                                        n)) + '\n')
         # 单元应力生成
         f.write('** Name: Predefined weld-1C1D-STRAIN \
                     Type: PLASTIC STRAIN\n*Initial Conditions, type=PLASTIC STRAIN\n')
         for target_label in range(1, len(target_els)):
             target_element = target_els[target_label]
+            if not point_in_line(target_element, circle):
+                continue
             knn_labels = knn_els[target_label]
             f.write(instance + str(target_label) + ', ' +
                     ', '.join(str(el) for el in inverse_distance_weight(target_element, [els[i] for i in knn_labels],
                                                                         [stress_data[i][1:7] for i in knn_labels],
-                                                                        select)) + '\n')
+                                                                        n)) + '\n')
         # 单元应变生成
         f.write('** Name: Predefined weld-1C1D-STRESS \
                     Type: STRESS\n*Initial Conditions, type=STRESS\n')
         for target_label in range(1, len(target_els)):
             target_element = target_els[target_label]
+            if not point_in_line(target_element, circle):
+                continue
             knn_labels = knn_els[target_label]
             f.write(instance + str(target_label) + ', ' +
                     ', '.join(str(el) for el in inverse_distance_weight(target_element, [els[i] for i in knn_labels],
                                                                         [stress_data[i][8:14] for i in knn_labels],
-                                                                        select)) + '\n')
+                                                                        n)) + '\n')
         f.write(content[pos:])
         print('\n新模型构建参数文件 input_info.inp 已生成。')
     end_time = time.time()
@@ -454,15 +521,15 @@ if __name__ == '__main__':
     target_nodes, target_node_num = load_data(path, node_target_file, target_node_num)  # 目标点集
     target_elements, target_element_num = load_data(path, element_target_file, target_element_num,
                                                     data_type='int')  # 目标单元集
-    target_elements = get_center_point(target_elements, target_nodes)
+    target_elements = get_center_point(target_elements, target_nodes)  # 目标单元集中心点
 
     # 节点的八叉树
-    parameter_node = get_parameter(nodes[1:])  # 初始参数
-    octree_node = build_octree(nodes, parameter_node)  # 生成八叉树
+    boundary_node = get_parameter(nodes[1:])  # 初始边界参数
+    octree_node = build_octree(nodes, boundary_node)  # 生成八叉树
     # tree_info(octree_node, node_num)  # 显示八叉树的相关信息
-    # # 单元的八叉树
-    parameter_element = get_parameter(elements[1:])
-    octree_element = build_octree(elements, parameter_element)
+    # 单元的八叉树
+    boundary_element = get_parameter(elements[1:])
+    octree_element = build_octree(elements, boundary_element)
     # tree_info(octree_element, element_num)
 
     # 获取近邻点
