@@ -2,7 +2,7 @@
 # @Time    : 2021/11/5 10:20
 # @Author  : ColorOfNight
 # @Email   : 852477089@qq.com
-# @File    : interpolation.py
+# @File    : interpolation_test.py
 # @Software: PyCharm
 # @Description: 比较三次线性插值和反距离差值的偏差
 
