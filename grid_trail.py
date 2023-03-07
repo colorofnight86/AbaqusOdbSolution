@@ -4,8 +4,8 @@
 # @Email   : 852477089@qq.com
 # @File    : grid_trail.py
 # @Software: PyCharm
-# @Description: 根据网格的中心点坐标生成轨迹
-#
+# @Description: 根据网格的中心点坐标生成轨迹 临时的abaqus需求
+
 
 import math
 

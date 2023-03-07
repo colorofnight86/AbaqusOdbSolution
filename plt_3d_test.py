@@ -2,7 +2,7 @@
 # @Time    : 2021/11/8 15:34
 # @Author  : ColorOfNight
 # @Email   : 852477089@qq.com
-# @File    : grid_division.py
+# @File    : plt_3d_test.py
 # @Software: PyCharm
 # @Description: plt的3d绘制测试
 

@@ -2,7 +2,7 @@
 # @Time    : 2021/12/8 16:55
 # @Author  : ColorOfNight
 # @Email   : 852477089@qq.com
-# @File    : 3dGrid.py
+# @File    : 3dGrid_test.py
 # @Software: PyCharm
 # @Description: 绘制3D网格的示例程序
 

@@ -5,6 +5,7 @@
 # @File    : hexahedral_volume.py
 # @Software: PyCharm
 # @Description: 求凸六面体体积
+
 # 用于网格体积的获取
 from abaqus import *
 import mesh

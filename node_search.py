@@ -11,7 +11,6 @@ import math
 import re
 
 
-
 class OcTreeNode:
     def __init__(self, idx, boundary, node_contained):
         self.id = idx
@@ -554,3 +553,4 @@ if __name__ == '__main__':
     output = 'input_info.inp'
     generate_output_file(path + output, path + inp_file, nodes, elements, target_nodes, target_elements,
                          knn_node, knn_element, data_temper, data_stress, 2)
+

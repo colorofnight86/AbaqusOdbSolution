@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+# @Time    : 2021/11/8 15:34
+# @Author  : ColorOfNight
+# @Email   : 852477089@qq.com
+# @File    : field+load+step.py
+# @Software: PyCharm
+# @Description: abaqus提取功能
+
 import math
 model_name = 'Model-1'
 set_name='Weld-1.Weld-Solu'
