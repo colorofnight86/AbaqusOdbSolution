@@ -69,6 +69,12 @@ def distance2(p1, p2):
 
 
 def get_point_list(num):
+    """
+    获取插值的随机测试数据
+
+    :param num: 需要获取的测试组数
+    :return: 内部插值点坐标，外部立方体坐标，立方体点的数值 均为对应起来的列表
+    """
     points = []
     inner_points = []
     values = []

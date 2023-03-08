@@ -236,8 +236,6 @@ def get_knn(point_list, tree, point, node_id, k):
         node_id = int(node_id / 10)
 
 
-
-
 # 判断点是否在线的上下左右的
 def check_point(_p1, _p2, _p):
     _l, _r, _u, _d = 0, 0, 0, 0
