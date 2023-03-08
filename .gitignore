@@ -4,6 +4,7 @@
 *.odb
 *.xmind
 *ceshi.py
+*test.py
 
 # IntelliJ project files
 .idea
